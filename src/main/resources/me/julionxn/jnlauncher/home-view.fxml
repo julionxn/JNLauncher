@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane fx:id="mainPane" prefHeight="600.0" prefWidth="900.0" stylesheets="@styles.css" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="me.julionxn.jnlauncher.controllers.HomeViewController">
+   <children>
+      <AnchorPane fx:id="dragable" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="40.0" prefWidth="900.0" />
+      <Button fx:id="close" layoutX="859.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#close" prefHeight="41.0" prefWidth="41.0" styleClass="top-btn" text="X" />
+      <Button fx:id="mini" layoutX="818.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#mini" prefHeight="41.0" prefWidth="41.0" styleClass="top-btn" text="-" />
+      <Button fx:id="home" layoutX="13.0" layoutY="67.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#home" prefHeight="40.0" prefWidth="40.0" styleClass="sidebar-btn" text="H" />
+      <Button fx:id="notis" layoutX="13.0" layoutY="124.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#notis" prefHeight="40.0" prefWidth="40.0" styleClass="sidebar-btn" text="N" />
+      <Button fx:id="settings" layoutX="13.0" layoutY="181.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#settings" prefHeight="40.0" prefWidth="40.0" styleClass="sidebar-btn" text="S" />
+      <Button fx:id="logout" layoutX="13.0" layoutY="545.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#logout" prefHeight="40.0" prefWidth="40.0" styleClass="sidebar-btn" text="L" />
+      <AnchorPane fx:id="baseLayout" layoutX="66.0" layoutY="41.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="560.0" prefWidth="834.0" />
+      <ImageView fx:id="headView" fitHeight="40.0" fitWidth="40.0" layoutX="13.0" layoutY="496.0" pickOnBounds="true" preserveRatio="true" />
+   </children>
+</AnchorPane>

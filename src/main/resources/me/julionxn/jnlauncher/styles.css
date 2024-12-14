@@ -1,0 +1,44 @@
+/*
+DARK: #0a100d
+GREEN: #67756b
+GRAY: #95958a
+WHITE: #d6d5c9
+RED: #a22c29
+*/
+
+@font-face {
+    font-family: "Poppins";
+    src: url("Poppins-Regular.ttf");
+}
+
+* {
+    -fx-font-family: "Poppins";
+}
+
+.sidebar-btn {
+    -fx-background-color: #0a100d;
+    -fx-text-fill: #d6d5c9;
+    -fx-background-radius: 10px;
+}
+
+.sidebar-btn-hovered {
+    -fx-background-color: #67756b;
+}
+
+.login-close-btn {
+    -fx-background-color: #95958a22;
+    -fx-background-radius: 10px;
+}
+
+.login-close-btn-hovered {
+    -fx-background-color: #a22c2922;
+}
+
+.top-btn {
+    -fx-background-color: #95958a;
+    -fx-background-radius: 0px;
+}
+
+.close-btn-hovered {
+    -fx-background-color: #a22c29;
+}
