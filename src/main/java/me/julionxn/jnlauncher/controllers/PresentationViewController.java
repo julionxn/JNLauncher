@@ -7,6 +7,8 @@ import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Cursor;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import me.julionxn.jnlauncher.Application;
@@ -18,13 +20,21 @@ import java.util.ResourceBundle;
 public class PresentationViewController extends BaseController implements Initializable {
 
     @FXML private AnchorPane mainPane;
+    @FXML private ImageView loadingView;
     private UserInfo userInfo;
     private URLProfiles urlProfiles;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         setBackground("img/Plaque.png", 400, 400, mainPane);
+        setLoadingView();
         mainPane.setCursor(Cursor.WAIT);
+    }
+
+    private void setLoadingView(){
+        Image gif = new Image(Application.getResource("img/loading.gif").toExternalForm());
+        loadingView.setImage(gif);
+        loadingView.setVisible(true);
     }
 
     @Override
@@ -40,9 +50,9 @@ public class PresentationViewController extends BaseController implements Initia
 
     private void loadProfiles(){
         long currentTime = System.currentTimeMillis();
-        urlProfiles = launcher.getProfilesController().getProfilesFrom("http://localhost/Testing/");
+        urlProfiles = launcher.getProfilesController().getValidProfilesFrom("http://localhost/Testing/", userInfo.playerInfo().UUID());
         long elapsedTime = System.currentTimeMillis() - currentTime;
-        int toElapse = 5000;
+        int toElapse = 3000;
         if (elapsedTime < toElapse){
             long sleepTime = toElapse - elapsedTime;
             try {

@@ -2,6 +2,8 @@ package me.julionxn.jnlauncher.controllers;
 
 import io.github.julionxn.cache.UserInfo;
 import io.github.julionxn.instance.PlayerInfo;
+import javafx.application.Platform;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
@@ -34,6 +36,7 @@ public class LoginViewController extends BaseController implements Initializable
     @FXML private Button enterBtn;
     @FXML private Button logoutBtn;
     @FXML private ImageView headView;
+    @FXML private ImageView loadingView;
     private UserInfo userInfo;
 
     @Override
@@ -47,7 +50,14 @@ public class LoginViewController extends BaseController implements Initializable
         headView.setClip(clip);
         setIcon("img/logout.png", logoutBtn);
         setIcon("img/close-mini.png", closeBtn);
+        setLoadingView();
         setState(State.LOGIN);
+    }
+
+    private void setLoadingView(){
+        Image gif = new Image(Application.getResource("img/connection.gif").toExternalForm());
+        loadingView.setImage(gif);
+        loadingView.setVisible(false);
     }
 
     private void setButtonsEffects(){
@@ -105,20 +115,41 @@ public class LoginViewController extends BaseController implements Initializable
 
     @FXML
     private void login() throws Exception {
-        HttpClient httpClient = MinecraftAuth.createHttpClient();
-        StepFullJavaSession.FullJavaSession javaSession = MinecraftAuth.JAVA_DEVICE_CODE_LOGIN.getFromInput(httpClient, new StepMsaDeviceCode.MsaDeviceCodeCallback(msaDeviceCode -> {
-            String verificationUri = msaDeviceCode.getDirectVerificationUri();
-            try {
-                if (Desktop.isDesktopSupported()) {
-                    Desktop desktop = Desktop.getDesktop();
-                    desktop.browse(new URI(verificationUri));
-                } else {
-                    System.out.println("Desktop is not supported on this platform.");
-                }
-            } catch (IOException | java.net.URISyntaxException e) {
-                e.printStackTrace();
+        loginBtn.setDisable(true);
+        loadingView.setVisible(true);
+        Task<StepFullJavaSession.FullJavaSession> authTask = new Task<>() {
+            @Override
+            protected StepFullJavaSession.FullJavaSession call() throws Exception {
+                HttpClient httpClient = MinecraftAuth.createHttpClient();
+                return MinecraftAuth.JAVA_DEVICE_CODE_LOGIN.getFromInput(httpClient, new StepMsaDeviceCode.MsaDeviceCodeCallback(msaDeviceCode -> {
+                    String verificationUri = msaDeviceCode.getDirectVerificationUri();
+                    try {
+                        if (Desktop.isDesktopSupported()) {
+                            Desktop desktop = Desktop.getDesktop();
+                            desktop.browse(new URI(verificationUri));
+                        } else {
+                            System.out.println("Desktop is not supported on this platform.");
+                        }
+                    } catch (IOException | java.net.URISyntaxException e) {
+                        e.printStackTrace();
+                    }
+                }));
             }
-        }));
+        };
+        authTask.setOnSucceeded(event -> {
+            StepFullJavaSession.FullJavaSession javaSession = authTask.getValue();
+            Platform.runLater(() -> auth(javaSession));
+        });
+        authTask.setOnFailed(event -> {
+            Throwable throwable = authTask.getException();
+            throwable.printStackTrace();
+        });
+        Thread authThread = new Thread(authTask, "AuthThread");
+        authThread.setDaemon(true);
+        authThread.start();
+    }
+
+    private void auth(StepFullJavaSession.FullJavaSession javaSession){
         String name = javaSession.getMcProfile().getName();
         UUID uuid = javaSession.getMcProfile().getId();
         String token = javaSession.getMcProfile().getMcToken().getAccessToken();
@@ -129,6 +160,8 @@ public class LoginViewController extends BaseController implements Initializable
         UserInfo userInfo = new UserInfo(playerInfo, skinUrl, expirationDate, imagePath);
         loadUserInfo(userInfo);
         launcher.getCacheController().storeUserInfo(userInfo);
+        loadingView.setVisible(false);
+        loginBtn.setDisable(false);
     }
 
     @FXML

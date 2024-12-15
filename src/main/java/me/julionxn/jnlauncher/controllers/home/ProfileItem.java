@@ -8,7 +8,12 @@ import io.github.julionxn.profile.Profile;
 import io.github.julionxn.profile.TempProfile;
 import io.github.julionxn.profile.URLProfile;
 import io.github.julionxn.version.MinecraftVersion;
+import javafx.animation.PauseTransition;
+import javafx.application.Platform;
+import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -17,9 +22,14 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
+import javafx.util.Duration;
 import me.julionxn.jnlauncher.Application;
+import me.julionxn.jnlauncher.BaseController;
+import me.julionxn.jnlauncher.controllers.CallbackViewController;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Optional;
 
@@ -86,22 +96,67 @@ public class ProfileItem {
         });
         stackPane.setOnMouseClicked(e -> {
             stage.setIconified(true);
-            Thread gameThread = new Thread(this::startInstance, "GameThread");
+            CallbackViewController controller = openCallbackWindow();
+            Thread gameThread = new Thread(() -> startInstance(controller), "GameThread");
             gameThread.start();
         });
         return stackPane;
     }
 
-    private void startInstance(){
+    private void startInstance(CallbackViewController callbackViewController){
         MinecraftVersion minecraftVersion = urlProfile.minecraftVersion();
-        Optional<MinecraftVersion> version = launcher.getVersionsController().installVersion(minecraftVersion, (status, progress) -> {});
-        if (version.isEmpty()) return;
+        Optional<MinecraftVersion> version = launcher.getVersionsController().installVersion(minecraftVersion,
+                (status, progress) ->
+                    Platform.runLater(() -> callbackViewController.onCallback(status, progress))
+                );
+        if (version.isEmpty()) {
+            setErrorCallback(callbackViewController);
+            return;
+        }
         TempProfile tempProfile = urlProfile.tempProfile();
         Optional<Profile> profile = tempProfile.save();
-        if (profile.isEmpty()) return;
+        if (profile.isEmpty()) {
+            setErrorCallback(callbackViewController);
+            return;
+        }
         MinecraftOptions minecraftOptions = new MinecraftOptions();
         MinecraftInstance instance = new MinecraftInstance(launcher, version.get(), minecraftOptions, profile.get(), playerInfo);
+        Platform.runLater(() -> {
+            callbackViewController.onCallback("Launching!", 1f);
+            PauseTransition pause = new PauseTransition(Duration.seconds(2));
+            pause.setOnFinished(event -> callbackViewController.close());
+            pause.play();
+        });
         instance.run();
+    }
+
+    private void setErrorCallback(CallbackViewController callbackViewController){
+        Platform.runLater(() -> {
+            callbackViewController.onCallback("Error ):", 1f);
+            PauseTransition pause = new PauseTransition(Duration.seconds(2));
+            pause.setOnFinished(event -> callbackViewController.close());
+            pause.play();
+        });
+    }
+
+    private CallbackViewController openCallbackWindow(){
+        try {
+            FXMLLoader loader = new FXMLLoader(Application.getResource("callback-view.fxml"));
+            Parent root = loader.load();
+            CallbackViewController controller = loader.getController();
+            Stage stage = new Stage();
+            controller.init(stage, launcher);
+            Scene scene = new Scene(root);
+            scene.setFill(Color.TRANSPARENT);
+            stage.initStyle(StageStyle.TRANSPARENT);
+            stage.setTitle("Starting Instance");
+            stage.setScene(scene);
+            stage.setResizable(false);
+            stage.show();
+            return controller;
+        } catch (IOException e){
+            throw new RuntimeException(e);
+        }
     }
 
     public StackPane getStackPane(){

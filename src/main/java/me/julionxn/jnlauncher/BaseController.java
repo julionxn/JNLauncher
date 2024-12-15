@@ -20,7 +20,13 @@ public class BaseController {
     }
 
     protected void setDragable(Pane pane){
-        pane.setBackground(null);
+        setDragable(pane, true);
+    }
+
+    protected void setDragable(Pane pane, boolean withoutBg){
+        if (withoutBg){
+            pane.setBackground(null);
+        }
         pane.setOnMousePressed(event -> {
             offsetX = event.getScreenX() - stage.getX();
             offsetY = event.getScreenY() - stage.getY();

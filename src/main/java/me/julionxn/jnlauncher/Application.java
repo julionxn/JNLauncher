@@ -22,8 +22,7 @@ public class Application extends javafx.application.Application {
 
     @Override
     public void start(Stage stage) throws IOException {
-        Font font = Font.loadFont(getResource("Poppins-Regular.ttf").toExternalForm(), -1);
-        System.out.println(font);
+        Font.loadFont(getResource("Poppins-Regular.ttf").toExternalForm(), -1);
         FXMLLoader fxmlLoader = new FXMLLoader(getResource("login-view.fxml"));
         Scene scene = new Scene(fxmlLoader.load());
         LoginViewController controller = fxmlLoader.getController();

@@ -12,5 +12,6 @@
       <Button fx:id="enterBtn" layoutX="420.0" layoutY="210.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#enter" prefHeight="40.0" prefWidth="150.0" style="-fx-font-size: 18px" styleClass="sidebar-btn" text="Go!" textAlignment="CENTER" textOverrun="CLIP" />
       <Button fx:id="closeBtn" layoutX="310.0" layoutY="50.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#close" prefHeight="40.0" prefWidth="40.0" styleClass="login-close-btn" text="X" />
       <ImageView fx:id="headView" fitHeight="40.0" fitWidth="40.0" layoutX="500.0" layoutY="160.0" pickOnBounds="true" preserveRatio="true" />
+      <ImageView fx:id="loadingView" fitHeight="40.0" fitWidth="40.0" layoutX="180.0" layoutY="250.0" pickOnBounds="true" preserveRatio="true" />
    </children>
 </AnchorPane>
