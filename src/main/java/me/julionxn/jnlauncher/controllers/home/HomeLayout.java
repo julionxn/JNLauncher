@@ -17,7 +17,9 @@ public class HomeLayout extends AbstractLayout {
 
     public HomeLayout(Stage stage, AnchorPane baseLayout, URLProfiles profiles, UserInfo userInfo, Launcher launcher) {
         super(stage, baseLayout, profiles, userInfo, launcher);
-        createItems();
+        if (profiles != null && !profiles.getAllProfiles().isEmpty()){
+            createItems();
+        }
     }
 
     private void createItems(){
